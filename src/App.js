@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import "./App.css";
 
-function App() {
+export default function App() {
+  const [users, setUsers] = useState([]);
+
+  const getUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/users");
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("Erro ao coletar a API");
+    }
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h2>Lista de Usuarios</h2>
+
+      {users.length === 0 ? (
+        <p className="loading">Carregando</p>
+      ) : (
+        users.map((u) => (
+          <div className="user-card" key={u.id}>
+            {u.id} <strong>{u.name}</strong> {u.email}
+          </div>
+        ))
+      )}
     </div>
   );
 }
-
-export default App;
